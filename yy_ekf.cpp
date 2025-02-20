@@ -41,8 +41,10 @@ ekf::ekf(vector & p_diag,
   m_Q(matrix{identity_matrix{m_n, m_n}} * EPS),
   m_R(matrix{identity_matrix{m_m, m_m}} * EPS),
   m_F(identity_matrix{m_n, m_n}),
-  m_H(p_h)
+  m_H()
 {
+  m_H.swap(p_h);
+
   const size_type size = p_diag.size();
 
   for(size_type i = 0; i < size; ++i)
@@ -55,15 +57,22 @@ ekf::ekf(vector & p_diag,
 ekf::ekf(ekf && other) noexcept:
   m_n(other.m_n),
   m_m(other.m_m),
-  m_x(std::move(other.m_x)),
-  m_P(std::move(other.m_P)),
-  m_Q(std::move(other.m_Q)),
-  m_R(std::move(other.m_R)),
-  m_F(std::move(other.m_F)),
-  m_H(std::move(other.m_H))
+  m_x(),
+  m_P(),
+  m_Q(),
+  m_R(),
+  m_F(),
+  m_H()
 {
   other.m_n = 0;
   other.m_m = 0;
+
+  m_x.swap(other.m_x);
+  m_P.swap(other.m_P);
+  m_Q.swap(other.m_Q);
+  m_R.swap(other.m_R);
+  m_F.swap(other.m_F);
+  m_H.swap(other.m_H);
 }
 
 ekf & ekf::operator=(ekf && other) noexcept
@@ -75,12 +84,18 @@ ekf & ekf::operator=(ekf && other) noexcept
     m_m = other.m_m;
     other.m_m = 0;
 
-    m_x = std::move(other.m_x);
-    m_P = std::move(other.m_P);
-    m_Q = std::move(other.m_Q);
-    m_R = std::move(other.m_R);
-    m_F = std::move(other.m_F);
-    m_H = std::move(other.m_H);
+    m_x = vector{};
+    m_x.swap(other.m_x);
+    m_P = matrix{};
+    m_P.swap(other.m_P);
+    m_Q = matrix{};
+    m_Q.swap(other.m_Q);
+    m_R = matrix{};
+    m_R.swap(other.m_R);
+    m_F = matrix{};
+    m_F.swap(other.m_F);
+    m_H = matrix{};
+    m_H.swap(other.m_H);
   }
   return *this;
 }
