@@ -42,7 +42,7 @@ include(${YY_CMAKE}/cmake_clang_tidy.txt)
 
 add_library(yy_maths STATIC)
 
-target_include_directories(yy_mqtt
+target_include_directories(yy_maths
   PRIVATE
     "${CMAKE_INSTALL_PREFIX}/include" )
 
