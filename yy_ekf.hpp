@@ -36,7 +36,9 @@ class ekf final
     using value_type = double;
     using matrix = yy_maths::matrix<value_type>;
     using identity_matrix = yy_maths::identity_matrix<value_type>;
+    using zero_matrix = yy_maths::zero_matrix<value_type>;
     using vector = yy_maths::vector<value_type>;
+    using zero_vector = yy_maths::zero_vector<value_type>;
     using size_type = matrix::size_type;
 
     static constexpr value_type EPS = 1e-4;
@@ -58,6 +60,11 @@ class ekf final
     const vector & X() const noexcept
     {
       return m_x;
+    }
+
+    const value_type & X(size_type idx) const noexcept
+    {
+      return m_x(idx);
     }
 
     constexpr size_type N() const noexcept
