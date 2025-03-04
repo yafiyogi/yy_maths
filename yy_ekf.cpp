@@ -36,21 +36,18 @@ ekf::ekf(vector & p_diag,
          matrix & p_h) noexcept:
   m_n(p_h.size2()),
   m_m(p_h.size1()),
-  m_x(m_n),
-  m_P(m_n, m_n),
+  m_x(zero_vector{m_n}),
+  m_P(zero_matrix{m_n, m_n}),
   m_Q(matrix{identity_matrix{m_n, m_n}} * EPS),
   m_R(matrix{identity_matrix{m_m, m_m}} * EPS),
   m_F(identity_matrix{m_n, m_n}),
-  m_H()
+  m_H(p_h)
 {
-  m_H.swap(p_h);
-
   const size_type size = p_diag.size();
 
   for(size_type i = 0; i < size; ++i)
   {
     m_P(i, i) = p_diag(i);
-    m_x(i) = 0;
   }
 }
 
