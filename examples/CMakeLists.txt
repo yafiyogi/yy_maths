@@ -31,8 +31,6 @@ project(examples_yy_maths LANGUAGES CXX)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 
-find_package(yy_maths REQUIRED)
-
 add_executable(ekf
   ekf.cpp )
 
@@ -50,6 +48,6 @@ target_compile_options(ekf
     "-DSPDLOG_FMT_EXTERNAL")
 
 target_link_libraries(ekf
-  yy_maths::yy_maths
+  yy_maths
   fmt::fmt
   spdlog::spdlog)
