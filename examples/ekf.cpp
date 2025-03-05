@@ -90,7 +90,7 @@ int main()
     predict_update(ekf_state, H1, z);
     fmt::print("1a) h=[{}] t=[{}]\n", ekf_state.X(0), ekf_state.X(1));
 
-    z <<= 49.49, 22, 23;
+    z <<= 49.49, 22, 0.0;
     predict_update(ekf_state, H1, z);
     fmt::print("1a) h=[{}] t=[{}]\n", ekf_state.X(0), ekf_state.X(1));
 
@@ -106,7 +106,7 @@ int main()
     predict_update(ekf_state, H1, z);
     fmt::print("2a) h=[{}] t=[{}]\n", ekf_state.X(0), ekf_state.X(1));
 
-    z <<= 49.59, 21, 24;
+    z <<= 49.59, 0.0, 24;
     predict_update(ekf_state, H2, z);
     fmt::print("2b) h=[{}] t=[{}]\n", ekf_state.X(0), ekf_state.X(1));
   }
