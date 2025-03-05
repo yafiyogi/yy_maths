@@ -24,6 +24,10 @@
 
 */
 
+
+// Inspired by https://github.com/simondlevy/TinyEKF
+// also https://simondlevy.github.io/ekf-tutorial/
+
 #include "boost/numeric/ublas/operation.hpp"
 
 #include "yy_matrix_util.hpp"
@@ -32,23 +36,16 @@
 
 namespace yafiyogi::yy_maths {
 
-ekf::ekf(vector & p_diag,
-         matrix & p_h) noexcept:
-  m_n(p_h.size2()),
-  m_m(p_h.size1()),
+ekf::ekf(size_type p_m,
+         size_type p_n) noexcept:
+  m_n(p_n),
+  m_m(p_m),
   m_x(zero_vector{m_n}),
-  m_P(zero_matrix{m_n, m_n}),
-  m_Q(matrix{identity_matrix{m_n, m_n}} * EPS),
-  m_R(matrix{identity_matrix{m_m, m_m}} * EPS),
-  m_F(identity_matrix{m_n, m_n}),
-  m_H(p_h)
+  m_P(identity_matrix{m_n, m_n}),
+  m_Q(identity_matrix{m_n, m_n} * EPS),
+  m_R(identity_matrix{m_m, m_m} * EPS),
+  m_F(identity_matrix{m_n, m_n})
 {
-  const size_type size = p_diag.size();
-
-  for(size_type i = 0; i < size; ++i)
-  {
-    m_P(i, i) = p_diag(i);
-  }
 }
 
 ekf::ekf(ekf && other) noexcept:
@@ -58,8 +55,7 @@ ekf::ekf(ekf && other) noexcept:
   m_P(),
   m_Q(),
   m_R(),
-  m_F(),
-  m_H()
+  m_F()
 {
   other.m_n = 0;
   other.m_m = 0;
@@ -69,7 +65,6 @@ ekf::ekf(ekf && other) noexcept:
   m_Q.swap(other.m_Q);
   m_R.swap(other.m_R);
   m_F.swap(other.m_F);
-  m_H.swap(other.m_H);
 }
 
 ekf & ekf::operator=(ekf && other) noexcept
@@ -91,8 +86,6 @@ ekf & ekf::operator=(ekf && other) noexcept
     m_R.swap(other.m_R);
     m_F = matrix{};
     m_F.swap(other.m_F);
-    m_H = matrix{};
-    m_H.swap(other.m_H);
   }
   return *this;
 }
@@ -114,15 +107,16 @@ void ekf::predict() noexcept
 }
 
 bool ekf::update(const vector & p_z, // observations
+                 const matrix & p_h,
                  const vector & p_hx) noexcept
 {
   namespace bnu = boost::numeric::ublas;
 
   // G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}
   matrix HP{m_m, m_n};
-  bnu::axpy_prod(m_H, m_P, HP, true);
+  bnu::axpy_prod(p_h, m_P, HP, true);
 
-  matrix Ht{bnu::trans(m_H)};
+  matrix Ht{bnu::trans(p_h)};
   matrix HpHtR{m_m, m_m};
   bnu::axpy_prod(HP, Ht, HpHtR, true);
   HpHtR += m_R;
@@ -147,7 +141,7 @@ bool ekf::update(const vector & p_z, // observations
 
   // P_k = (I - G_k H_k) P_k
   matrix GH{m_n, m_n};
-  bnu::axpy_prod(G, m_H, GH, true);
+  bnu::axpy_prod(G, p_h, GH, true);
   GH *= -1; // negate
   GH += identity_matrix{GH.size1()};
 

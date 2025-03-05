@@ -24,6 +24,9 @@
 
 */
 
+// Inspired by https://github.com/simondlevy/TinyEKF
+// also https://simondlevy.github.io/ekf-tutorial/
+
 #pragma once
 
 #include "yy_matrix.hpp"
@@ -43,8 +46,8 @@ class ekf final
 
     static constexpr value_type EPS = 1e-4;
 
-    ekf(vector & p_diag,
-        matrix & p_h) noexcept;
+    ekf(size_type p_m,
+        size_type p_n) noexcept;
 
     constexpr ekf() noexcept = default;
     ekf(const ekf & other) noexcept = default;
@@ -55,6 +58,7 @@ class ekf final
 
     void predict() noexcept;
     bool update(const vector & z, // observations
+                const matrix & p_h,
                 const vector & hx) noexcept;
 
     const vector & X() const noexcept
@@ -86,7 +90,6 @@ class ekf final
     matrix m_Q{};
     matrix m_R{};
     matrix m_F{};
-    matrix m_H{};
 };
 
 } // namespace yafiyogi::yy_maths
