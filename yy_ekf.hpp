@@ -89,7 +89,6 @@ class ekf final
 
     matrix m_Q{};
     matrix m_R{};
-    matrix m_F{};
 };
 
 } // namespace yafiyogi::yy_maths

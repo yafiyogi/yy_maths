@@ -43,8 +43,7 @@ ekf::ekf(size_type p_m,
   m_x(zero_vector{m_n}),
   m_P(identity_matrix{m_n, m_n}),
   m_Q(identity_matrix{m_n, m_n} * EPS),
-  m_R(identity_matrix{m_m, m_m} * EPS),
-  m_F(identity_matrix{m_n, m_n})
+  m_R(identity_matrix{m_m, m_m} * EPS)
 {
 }
 
@@ -54,8 +53,7 @@ ekf::ekf(ekf && other) noexcept:
   m_x(),
   m_P(),
   m_Q(),
-  m_R(),
-  m_F()
+  m_R()
 {
   other.m_n = 0;
   other.m_m = 0;
@@ -64,7 +62,6 @@ ekf::ekf(ekf && other) noexcept:
   m_P.swap(other.m_P);
   m_Q.swap(other.m_Q);
   m_R.swap(other.m_R);
-  m_F.swap(other.m_F);
 }
 
 ekf & ekf::operator=(ekf && other) noexcept
@@ -84,8 +81,6 @@ ekf & ekf::operator=(ekf && other) noexcept
     m_Q.swap(other.m_Q);
     m_R = matrix{};
     m_R.swap(other.m_R);
-    m_F = matrix{};
-    m_F.swap(other.m_F);
   }
   return *this;
 }
@@ -94,10 +89,11 @@ void ekf::predict() noexcept
 {
   namespace bnu = boost::numeric::ublas;
 
+  identity_matrix F{m_n, m_n};
   matrix FP{m_n, m_n};
-  bnu::axpy_prod(m_F, m_P, FP, true);
+  bnu::axpy_prod(F, m_P, FP, true);
 
-  matrix Ft{bnu::trans(m_F)};
+  matrix Ft{bnu::trans(F)};
 
   matrix FPFt{m_n, m_n};
   bnu::axpy_prod(FP, Ft, FPFt, true);
