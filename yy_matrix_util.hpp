@@ -57,7 +57,7 @@ constexpr bool choldc1(matrix<T> & a,
 
       if(i == j)
       {
-        if(sum <= 0)
+        if(sum <= value_type{})
         {
           return false; /* error */
         }
@@ -95,7 +95,7 @@ constexpr bool choldcsl(const matrix<T> & A,
     a(i, i) = 1 / p[i];
     for(size_type j = i + 1; j < size; ++j)
     {
-      value_type sum = 0.0;
+      value_type sum{};
       for(size_type k = i; k < j; ++k)
       {
         sum -= a(j, k) * a(k, i);
@@ -116,7 +116,7 @@ constexpr bool cholsl(const matrix<T> & A,
   using value_type = matrix_type::value_type;
   using size_type = matrix_type::size_type;
 
-  if(!choldcsl(A,a,p))
+  if(!choldcsl(A, a, p))
   {
     return false;
   }
@@ -126,7 +126,7 @@ constexpr bool cholsl(const matrix<T> & A,
   {
     for(size_type j = i + 1; j < size; ++j)
     {
-      a(i, j) = 0.0;
+      a(i, j) = value_type{};
     }
   }
 
