@@ -29,6 +29,7 @@
 #include "boost/numeric/ublas/matrix.hpp"
 #include "boost/numeric/ublas/vector.hpp"
 
+#include "yy_identity_matrix.hpp"
 #include "yy_matrix_fwd.hpp"
 
 namespace yafiyogi::yy_maths {
@@ -39,6 +40,9 @@ using matrix = boost::numeric::ublas::matrix<T>;
 template<typename T>
 using identity_matrix = boost::numeric::ublas::identity_matrix<T>;
 
+template<typename T, T Value = 1>
+using identity_matrix_v = boost::numeric::ublas::identity_matrix_v<T, Value>;
+
 template<typename T>
 using zero_matrix = boost::numeric::ublas::zero_matrix<T>;
 
@@ -47,4 +51,5 @@ using vector = boost::numeric::ublas::vector<T>;
 
 template<typename T>
 using zero_vector = boost::numeric::ublas::zero_vector<T>;
+
 } // namespace yafiyogi::yy_maths
