@@ -41,9 +41,7 @@ ekf::ekf(size_type p_m,
   m_n(p_n),
   m_m(p_m),
   m_x(zero_vector{m_n}),
-  m_P(identity_matrix{m_n, m_n}),
-  m_Q(identity_matrix{m_n, m_n} * EPS),
-  m_R(identity_matrix{m_m, m_m} * EPS)
+  m_P(identity_matrix{m_n, m_n})
 {
 }
 
@@ -51,17 +49,13 @@ ekf::ekf(ekf && other) noexcept:
   m_n(other.m_n),
   m_m(other.m_m),
   m_x(),
-  m_P(),
-  m_Q(),
-  m_R()
+  m_P()
 {
   other.m_n = 0;
   other.m_m = 0;
 
   m_x.swap(other.m_x);
   m_P.swap(other.m_P);
-  m_Q.swap(other.m_Q);
-  m_R.swap(other.m_R);
 }
 
 ekf & ekf::operator=(ekf && other) noexcept
@@ -77,10 +71,6 @@ ekf & ekf::operator=(ekf && other) noexcept
     m_x.swap(other.m_x);
     m_P = matrix{};
     m_P.swap(other.m_P);
-    m_Q = matrix{};
-    m_Q.swap(other.m_Q);
-    m_R = matrix{};
-    m_R.swap(other.m_R);
   }
   return *this;
 }
@@ -97,7 +87,7 @@ void ekf::predict() noexcept
 
   matrix FPFt{m_n, m_n};
   bnu::axpy_prod(FP, Ft, FPFt, true);
-  FPFt += m_Q;
+  FPFt += identity_matrix_eps{m_n, m_n};;
 
   m_P.swap(FPFt);
 }
@@ -115,7 +105,7 @@ bool ekf::update(const vector & p_z, // observations
   matrix Ht{bnu::trans(p_h)};
   matrix HpHtR{m_m, m_m};
   bnu::axpy_prod(HP, Ht, HpHtR, true);
-  HpHtR += m_R;
+  HpHtR += identity_matrix_eps{m_m, m_m};
 
   matrix HPHtRinv{m_m, m_m};
   if(!invert(HpHtR, HPHtRinv))

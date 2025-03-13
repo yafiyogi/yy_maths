@@ -37,14 +37,15 @@ class ekf final
 {
   public:
     using value_type = double;
+    static constexpr value_type EPS = 1e-4;
+
     using matrix = yy_maths::matrix<value_type>;
     using identity_matrix = yy_maths::identity_matrix<value_type>;
+    using identity_matrix_eps = yy_maths::identity_matrix_v<value_type, EPS>;
     using zero_matrix = yy_maths::zero_matrix<value_type>;
     using vector = yy_maths::vector<value_type>;
     using zero_vector = yy_maths::zero_vector<value_type>;
     using size_type = matrix::size_type;
-
-    static constexpr value_type EPS = 1e-4;
 
     ekf(size_type p_m,
         size_type p_n) noexcept;
@@ -86,9 +87,6 @@ class ekf final
     size_type m_m = 0;
     vector m_x{}; // State vector.
     matrix m_P{}; // Prediction error covariance
-
-    matrix m_Q{};
-    matrix m_R{};
 };
 
 } // namespace yafiyogi::yy_maths
