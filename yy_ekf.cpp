@@ -128,7 +128,7 @@ bool ekf::update(const vector & p_z, // observations
   // P_k = (I - G_k H_k) P_k
   matrix GH{m_n, m_n};
   bnu::axpy_prod(G, p_h, GH, true);
-  GH *= -1; // negate
+  GH *= -1.0; // negate
   GH += identity_matrix{GH.size1()};
 
   matrix GHP{m_n, m_n};
