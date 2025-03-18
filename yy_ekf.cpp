@@ -41,7 +41,7 @@ ekf::ekf(size_type p_m,
   m_n(p_n),
   m_m(p_m),
   m_x(zero_vector{m_n}),
-  m_P(identity_matrix{m_n, m_n})
+  m_P(identity_matrix{m_n})
 {
 }
 
@@ -79,17 +79,14 @@ void ekf::predict() noexcept
 {
   namespace bnu = boost::numeric::ublas;
 
-  identity_matrix F{m_n, m_n};
+  const identity_matrix F{m_n};
   matrix FP{m_n, m_n};
   bnu::axpy_prod(F, m_P, FP, true);
 
-  matrix Ft{bnu::trans(F)};
+  const identity_matrix & Ft = F; // matrix Ft{bnu::trans(F)} simplified since identity_matrix == trans(identity_matrix);
 
-  matrix FPFt{m_n, m_n};
-  bnu::axpy_prod(FP, Ft, FPFt, true);
-  FPFt += identity_matrix_eps{m_n, m_n};;
-
-  m_P.swap(FPFt);
+  m_P = identity_matrix_eps{m_n};
+  bnu::axpy_prod(FP, Ft, m_P, false);
 }
 
 bool ekf::update(const vector & p_z, // observations
@@ -99,13 +96,12 @@ bool ekf::update(const vector & p_z, // observations
   namespace bnu = boost::numeric::ublas;
 
   // G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}
-  matrix HP{m_m, m_n};
+  matrix HP{p_h};
   bnu::axpy_prod(p_h, m_P, HP, true);
 
   matrix Ht{bnu::trans(p_h)};
-  matrix HpHtR{m_m, m_m};
-  bnu::axpy_prod(HP, Ht, HpHtR, true);
-  HpHtR += identity_matrix_eps{m_m, m_m};
+  matrix HpHtR{identity_matrix_eps{m_m}};
+  bnu::axpy_prod(HP, Ht, HpHtR, false);
 
   matrix HPHtRinv{m_m, m_m};
   if(!invert(HpHtR, HPHtRinv))
@@ -126,10 +122,9 @@ bool ekf::update(const vector & p_z, // observations
   bnu::axpy_prod(G, z_hx, m_x, false);
 
   // P_k = (I - G_k H_k) P_k
-  matrix GH{m_n, m_n};
-  bnu::axpy_prod(G, p_h, GH, true);
+  matrix GH{identity_matrix_neg{m_n}};
+  bnu::axpy_prod(G, p_h, GH, false);
   GH *= -1.0; // negate
-  GH += identity_matrix{GH.size1()};
 
   matrix GHP{m_n, m_n};
   bnu::axpy_prod(GH, m_P, GHP, true);
