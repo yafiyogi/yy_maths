@@ -59,9 +59,9 @@ class ekf final
     ekf & operator=(ekf && other) noexcept;
 
     void predict() noexcept;
-    bool update(const vector & z, // observations
-                const matrix & p_h,
-                const vector & hx) noexcept;
+    bool update(const vector & p_z, // observations m wide
+                const matrix & p_h, // m x n (m -> inputs, n -> outputs)
+                const vector & p_hx) noexcept; // m wide
 
     const vector & X() const noexcept
     {

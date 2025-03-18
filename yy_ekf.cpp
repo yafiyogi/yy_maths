@@ -89,14 +89,14 @@ void ekf::predict() noexcept
   bnu::axpy_prod(FP, Ft, m_P, false);
 }
 
-bool ekf::update(const vector & p_z, // observations
-                 const matrix & p_h,
-                 const vector & p_hx) noexcept
+bool ekf::update(const vector & p_z, // observations m wide
+                 const matrix & p_h, // m x n (m -> inputs, n -> outputs)
+                 const vector & p_hx) noexcept // m wide
 {
   namespace bnu = boost::numeric::ublas;
 
   // G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}
-  matrix HP{p_h};
+  matrix HP{m_m, m_n};
   bnu::axpy_prod(p_h, m_P, HP, true);
 
   matrix Ht{bnu::trans(p_h)};
