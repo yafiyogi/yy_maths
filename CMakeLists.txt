@@ -59,6 +59,7 @@ target_sources(yy_maths
       yy_fib.hpp
       yy_identity_matrix.hpp
       yy_matrix.hpp
+      yy_matrix_fmt.hpp
       yy_matrix_fwd.hpp
       yy_matrix_util.hpp)
 
