@@ -39,8 +39,8 @@ constexpr bool choldc1(matrix<T> & a,
                        vector<T> & p) noexcept
 {
   using matrix_type = matrix<T>;
-  using value_type = matrix_type::value_type;
-  using size_type = matrix_type::size_type;
+  using value_type = typename matrix_type::value_type;
+  using size_type = typename matrix_type::size_type;
 
   const size_type size = a.size1();
 
@@ -79,8 +79,8 @@ constexpr bool choldcsl(const matrix<T> & A,
                         vector<T> & p) noexcept
 {
   using matrix_type = matrix<T>;
-  using value_type = matrix_type::value_type;
-  using size_type = matrix_type::size_type;
+  using value_type = typename matrix_type::value_type;
+  using size_type = typename matrix_type::size_type;
 
   a = A;
 
@@ -113,8 +113,8 @@ constexpr bool cholsl(const matrix<T> & A,
                       vector<T> & p) noexcept
 {
   using matrix_type = matrix<T>;
-  using value_type = matrix_type::value_type;
-  using size_type = matrix_type::size_type;
+  using value_type = typename matrix_type::value_type;
+  using size_type = typename matrix_type::size_type;
 
   if(!choldcsl(A, a, p))
   {
