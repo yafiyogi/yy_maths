@@ -66,47 +66,50 @@
 
 #include "boost/numeric/ublas/matrix.hpp"
 
-// identity_matrix_v is copied from identity_matrix in boost/numeric/ublas/matrix.hpp
+// diagonal_matrix is copied from identity_matrix in boost/numeric/ublas/matrix.hpp
 // Amended by me.
 
-namespace boost::numeric::ublas {
+namespace yafiyogi::yy_maths {
+namespace bnu = boost::numeric::ublas;
 
-template<class T, T Value = 1, class ALLOC = std::allocator<T>>
-class identity_matrix_v:
-      public matrix_container<identity_matrix_v<T, Value, ALLOC> > {
+template<typename T,
+         T Value,
+         typename ALLOC = std::allocator<T>>
+class diagonal_matrix:
+      public bnu::matrix_container<diagonal_matrix<T, Value, ALLOC> > {
 
     typedef const T *const_pointer;
-    typedef identity_matrix_v<T, Value, ALLOC> self_type;
+    typedef diagonal_matrix<T, Value, ALLOC> self_type;
   public:
 #ifdef BOOST_UBLAS_ENABLE_PROXY_SHORTCUTS
-    using matrix_container<self_type>::operator ();
+    using bnu::matrix_container<self_type>::operator ();
 #endif
     typedef typename boost::allocator_size_type<ALLOC>::type size_type;
     typedef typename boost::allocator_difference_type<ALLOC>::type difference_type;
     typedef T value_type;
     typedef const T &const_reference;
     typedef T &reference;
-    typedef const matrix_reference<const self_type> const_closure_type;
-    typedef matrix_reference<self_type> closure_type;
-    typedef sparse_tag storage_category;
-    typedef unknown_orientation_tag orientation_category;
+    typedef const bnu::matrix_reference<const self_type> const_closure_type;
+    typedef bnu::matrix_reference<self_type> closure_type;
+    typedef bnu::sparse_tag storage_category;
+    typedef bnu::unknown_orientation_tag orientation_category;
 
     // Construction and destruction
     BOOST_UBLAS_INLINE
-    identity_matrix_v ():
-      matrix_container<self_type> (),
+    diagonal_matrix ():
+      bnu::matrix_container<self_type> (),
       size1_ (0), size2_ (0), size_common_ (0) {}
     BOOST_UBLAS_INLINE
-    identity_matrix_v (size_type size):
-      matrix_container<self_type> (),
+    diagonal_matrix (size_type size):
+      bnu::matrix_container<self_type> (),
       size1_ (size), size2_ (size), size_common_ ((std::min) (size1_, size2_)) {}
     BOOST_UBLAS_INLINE
-    identity_matrix_v (size_type size1, size_type size2):
-      matrix_container<self_type> (),
+    diagonal_matrix (size_type size1, size_type size2):
+      bnu::matrix_container<self_type> (),
       size1_ (size1), size2_ (size2), size_common_ ((std::min) (size1_, size2_)) {}
     BOOST_UBLAS_INLINE
-    identity_matrix_v (const identity_matrix_v &m):
-      matrix_container<self_type> (),
+    diagonal_matrix (const diagonal_matrix &m):
+      bnu::matrix_container<self_type> (),
       size1_ (m.size1_), size2_ (m.size2_), size_common_ ((std::min) (size1_, size2_)) {}
 
     // Accessors
@@ -144,21 +147,21 @@ class identity_matrix_v:
 
     // Assignment
     BOOST_UBLAS_INLINE
-    identity_matrix_v &operator = (const identity_matrix_v &m) {
+    diagonal_matrix &operator = (const diagonal_matrix &m) {
       size1_ = m.size1_;
       size2_ = m.size2_;
       size_common_ = m.size_common_;
       return *this;
     }
     BOOST_UBLAS_INLINE
-    identity_matrix_v &assign_temporary (identity_matrix_v &m) {
+    diagonal_matrix &assign_temporary (diagonal_matrix &m) {
       swap (m);
       return *this;
     }
 
     // Swapping
     BOOST_UBLAS_INLINE
-    void swap (identity_matrix_v &m) {
+    void swap (diagonal_matrix &m) {
       if (this != &m) {
         std::swap (size1_, m.size1_);
         std::swap (size2_, m.size2_);
@@ -166,7 +169,7 @@ class identity_matrix_v:
       }
     }
     BOOST_UBLAS_INLINE
-    friend void swap (identity_matrix_v &m1, identity_matrix_v &m2) {
+    friend void swap (diagonal_matrix &m1, diagonal_matrix &m2) {
       m1.swap (m2);
     }
 
@@ -178,8 +181,8 @@ class identity_matrix_v:
   public:
     class const_iterator1;
     class const_iterator2;
-    typedef reverse_iterator_base1<const_iterator1> const_reverse_iterator1;
-    typedef reverse_iterator_base2<const_iterator2> const_reverse_iterator2;
+    typedef bnu::reverse_iterator_base1<const_iterator1> const_reverse_iterator1;
+    typedef bnu::reverse_iterator_base2<const_iterator2> const_reverse_iterator2;
 
     // Element lookup
     BOOST_UBLAS_INLINE
@@ -201,14 +204,14 @@ class identity_matrix_v:
 
 
     class const_iterator1:
-      public container_const_reference<identity_matrix_v>,
-      public bidirectional_iterator_base<sparse_bidirectional_iterator_tag,
-                                         const_iterator1, value_type> {
+      public bnu::container_const_reference<diagonal_matrix>,
+      public bnu::bidirectional_iterator_base<bnu::sparse_bidirectional_iterator_tag,
+                                              const_iterator1, value_type> {
       public:
-        typedef typename identity_matrix_v::value_type value_type;
-        typedef typename identity_matrix_v::difference_type difference_type;
-        typedef typename identity_matrix_v::const_reference reference;
-        typedef typename identity_matrix_v::const_pointer pointer;
+        typedef typename diagonal_matrix::value_type value_type;
+        typedef typename diagonal_matrix::difference_type difference_type;
+        typedef typename diagonal_matrix::const_reference reference;
+        typedef typename diagonal_matrix::const_pointer pointer;
 
         typedef const_iterator2 dual_iterator_type;
         typedef const_reverse_iterator2 dual_reverse_iterator_type;
@@ -216,10 +219,10 @@ class identity_matrix_v:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         const_iterator1 ():
-          container_const_reference<self_type> (), it_ () {}
+          bnu::container_const_reference<self_type> (), it_ () {}
         BOOST_UBLAS_INLINE
         const_iterator1 (const self_type &m, const const_subiterator_type &it):
-          container_const_reference<self_type> (m), it_ (it) {}
+          bnu::container_const_reference<self_type> (m), it_ (it) {}
 
         // Arithmetic
         BOOST_UBLAS_INLINE
@@ -313,7 +316,7 @@ class identity_matrix_v:
         // Assignment
         BOOST_UBLAS_INLINE
         const_iterator1 &operator = (const const_iterator1 &it) {
-          container_const_reference<self_type>::assign (&it ());
+          bnu::container_const_reference<self_type>::assign (&it ());
           it_ = it.it_;
           return *this;
         }
@@ -349,14 +352,14 @@ class identity_matrix_v:
     }
 
     class const_iterator2:
-      public container_const_reference<identity_matrix_v>,
-      public bidirectional_iterator_base<sparse_bidirectional_iterator_tag,
-                                         const_iterator2, value_type> {
+      public bnu::container_const_reference<diagonal_matrix>,
+      public bnu::bidirectional_iterator_base<bnu::sparse_bidirectional_iterator_tag,
+                                              const_iterator2, value_type> {
       public:
-        typedef typename identity_matrix_v::value_type value_type;
-        typedef typename identity_matrix_v::difference_type difference_type;
-        typedef typename identity_matrix_v::const_reference reference;
-        typedef typename identity_matrix_v::const_pointer pointer;
+        typedef typename diagonal_matrix::value_type value_type;
+        typedef typename diagonal_matrix::difference_type difference_type;
+        typedef typename diagonal_matrix::const_reference reference;
+        typedef typename diagonal_matrix::const_pointer pointer;
 
         typedef const_iterator1 dual_iterator_type;
         typedef const_reverse_iterator1 dual_reverse_iterator_type;
@@ -364,10 +367,10 @@ class identity_matrix_v:
         // Construction and destruction
         BOOST_UBLAS_INLINE
         const_iterator2 ():
-          container_const_reference<self_type> (), it_ () {}
+          bnu::container_const_reference<self_type> (), it_ () {}
         BOOST_UBLAS_INLINE
         const_iterator2 (const self_type &m, const const_subiterator_type &it):
-          container_const_reference<self_type> (m), it_ (it) {}
+          bnu::container_const_reference<self_type> (m), it_ (it) {}
 
         // Arithmetic
         BOOST_UBLAS_INLINE
@@ -461,7 +464,7 @@ class identity_matrix_v:
         // Assignment
         BOOST_UBLAS_INLINE
         const_iterator2 &operator = (const const_iterator2 &it) {
-          container_const_reference<self_type>::assign (&it ());
+          bnu::container_const_reference<self_type>::assign (&it ());
           it_ = it.it_;
           return *this;
         }
@@ -533,17 +536,17 @@ class identity_matrix_v:
     }
 
     // Serialization
-    template<class Archive>
+    template<typename Archive>
     void serialize(Archive & ar, const unsigned int /* file_version */){
 
       // we need to copy to a collection_size_type to get a portable
       // and efficient serialization
-      serialization::collection_size_type s1 (size1_);
-      serialization::collection_size_type s2 (size2_);
+      boost::serialization::collection_size_type s1 (size1_);
+      boost::serialization::collection_size_type s2 (size2_);
 
       // serialize the sizes
-      ar & serialization::make_nvp("size1",s1)
-        & serialization::make_nvp("size2",s2);
+      ar & boost::serialization::make_nvp("size1",s1)
+        & boost::serialization::make_nvp("size2",s2);
 
       // copy the values back if loading
       if (Archive::is_loading::value) {
@@ -561,9 +564,9 @@ class identity_matrix_v:
     static const value_type value_;
 };
 
-template<class T, T Value, class ALLOC>
-const typename identity_matrix_v<T, Value, ALLOC>::value_type identity_matrix_v<T, Value, ALLOC>::zero_ = T(/*zero*/);
-template<class T, T Value, class ALLOC>
-const typename identity_matrix_v<T, Value, ALLOC>::value_type identity_matrix_v<T, Value, ALLOC>::value_ (Value); // ISSUE: need 'one'-traits here
+template<typename T, T Value, typename ALLOC>
+const typename diagonal_matrix<T, Value, ALLOC>::value_type diagonal_matrix<T, Value, ALLOC>::zero_{};
+template<typename T, T Value, typename ALLOC>
+const typename diagonal_matrix<T, Value, ALLOC>::value_type diagonal_matrix<T, Value, ALLOC>::value_{Value};
 
-} // namespace boost::numeric::ublas
+} // namespace yafiyogi::yy_maths
