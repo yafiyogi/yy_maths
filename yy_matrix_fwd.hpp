@@ -36,7 +36,19 @@ using matrix = boost::numeric::ublas::matrix<T>;
 template<typename T>
 using identity_matrix = boost::numeric::ublas::identity_matrix<T>;
 
+template<class T, T Value = 1>
+using identity_matrix_v = boost::numeric::ublas::identity_matrix_v<T, Value>;
+
+template<class T, T Value = 1, class ALLOC = std::allocator<T>>
+class identity_matrix;
+
+template<typename T>
+using zero_matrix = boost::numeric::ublas::zero_matrix<T>;
+
 template<typename T>
 using vector = boost::numeric::ublas::vector<T>;
+
+template<typename T>
+using zero_vector = boost::numeric::ublas::zero_vector<T>;
 
 } // namespace yafiyogi::yy_maths
