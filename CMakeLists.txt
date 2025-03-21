@@ -57,7 +57,7 @@ target_sources(yy_maths
     FILES
       yy_ekf.hpp
       yy_fib.hpp
-      yy_identity_matrix.hpp
+      yy_diagonal_matrix.hpp
       yy_matrix.hpp
       yy_matrix_fmt.hpp
       yy_matrix_fwd.hpp
