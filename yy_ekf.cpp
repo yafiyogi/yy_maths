@@ -85,7 +85,7 @@ void ekf::predict() noexcept
 
   const identity_matrix & Ft = F; // matrix Ft{bnu::trans(F)} simplified since identity_matrix == trans(identity_matrix);
 
-  m_P = identity_matrix_eps{m_n}; // Add process noise Q.
+  m_P = diagonal_matrix_eps{m_n}; // Add process noise Q.
   bnu::axpy_prod(FP, Ft, m_P, false);
 }
 
@@ -100,7 +100,7 @@ bool ekf::update(const vector & p_z, // observations m wide
   bnu::axpy_prod(p_h, m_P, HP, true);
 
   matrix Ht{bnu::trans(p_h)};
-  matrix HpHtR{identity_matrix_eps{m_m}}; // Add R measurement noise.
+  matrix HpHtR{diagonal_matrix_eps{m_m}}; // Add R measurement noise.
   bnu::axpy_prod(HP, Ht, HpHtR, false);
 
   matrix HPHtRinv{m_m, m_m};
@@ -122,7 +122,7 @@ bool ekf::update(const vector & p_z, // observations m wide
   bnu::axpy_prod(G, z_hx, m_x, false);
 
   // P_k = (I - G_k H_k) P_k
-  matrix GH{identity_matrix_neg{m_n}};
+  matrix GH{diagonal_matrix_neg{m_n}};
   bnu::axpy_prod(G, p_h, GH, false);
   GH *= -1.0; // negate
 

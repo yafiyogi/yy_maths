@@ -30,6 +30,7 @@
 #pragma once
 
 #include "yy_matrix.hpp"
+#include "yy_diagonal_matrix.hpp"
 
 namespace yafiyogi::yy_maths {
 
@@ -41,8 +42,8 @@ class ekf final
 
     using matrix = yy_maths::matrix<value_type>;
     using identity_matrix = yy_maths::identity_matrix<value_type>;
-    using identity_matrix_eps = yy_maths::identity_matrix_v<value_type, EPS>;
-    using identity_matrix_neg = yy_maths::identity_matrix_v<value_type, -1.0>;
+    using diagonal_matrix_eps = diagonal_matrix<value_type, EPS>;
+    using diagonal_matrix_neg = diagonal_matrix<value_type, -1.0>;
     using zero_matrix = yy_maths::zero_matrix<value_type>;
     using vector = yy_maths::vector<value_type>;
     using zero_vector = yy_maths::zero_vector<value_type>;
