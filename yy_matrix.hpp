@@ -30,7 +30,6 @@
 #include "boost/numeric/ublas/vector.hpp"
 
 #include "yy_identity_matrix.hpp"
-#include "yy_matrix_fwd.hpp"
 
 namespace yafiyogi::yy_maths {
 
