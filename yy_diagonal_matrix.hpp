@@ -227,13 +227,13 @@ class diagonal_matrix:
         // Arithmetic
         BOOST_UBLAS_INLINE
         const_iterator1 &operator ++ () {
-          BOOST_UBLAS_CHECK (it_ < (*this) ().size1 (), bad_index ());
+          BOOST_UBLAS_CHECK (it_ < (*this) ().size1 (), bnu::bad_index ());
           ++it_;
           return *this;
         }
         BOOST_UBLAS_INLINE
         const_iterator1 &operator -- () {
-          BOOST_UBLAS_CHECK (it_ > 0, bad_index ());
+          BOOST_UBLAS_CHECK (it_ > 0, bnu::bad_index ());
           --it_;
           return *this;
         }
@@ -324,7 +324,7 @@ class diagonal_matrix:
         // Comparison
         BOOST_UBLAS_INLINE
         bool operator == (const const_iterator1 &it) const {
-          BOOST_UBLAS_CHECK (&(*this) () == &it (), external_logic ());
+          BOOST_UBLAS_CHECK (&(*this) () == &it (), bnu::external_logic ());
           return it_ == it.it_;
         }
 
@@ -375,13 +375,13 @@ class diagonal_matrix:
         // Arithmetic
         BOOST_UBLAS_INLINE
         const_iterator2 &operator ++ () {
-          BOOST_UBLAS_CHECK (it_ < (*this) ().size_common_, bad_index ());
+          BOOST_UBLAS_CHECK (it_ < (*this) ().size_common_, bnu::bad_index ());
           ++it_;
           return *this;
         }
         BOOST_UBLAS_INLINE
         const_iterator2 &operator -- () {
-          BOOST_UBLAS_CHECK (it_ > 0, bad_index ());
+          BOOST_UBLAS_CHECK (it_ > 0, bnu::bad_index ());
           --it_;
           return *this;
         }
@@ -472,7 +472,7 @@ class diagonal_matrix:
         // Comparison
         BOOST_UBLAS_INLINE
         bool operator == (const const_iterator2 &it) const {
-          BOOST_UBLAS_CHECK (&(*this) () == &it (), external_logic ());
+          BOOST_UBLAS_CHECK (&(*this) () == &it (), bnu::external_logic ());
           return it_ == it.it_;
         }
 
