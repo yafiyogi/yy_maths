@@ -144,9 +144,11 @@ constexpr bool cholsl(const matrix<T> & A,
 
     for(size_type j = i + 1; j < size; ++j)
     {
+      value_type & a_ij = a(i, j);
+
       for(size_type k = j; k < size; ++k)
       {
-        a(i, j) += a(k, i) * a(k, j);
+        a_ij += a(k, i) * a(k, j);
       }
     }
   }
