@@ -80,8 +80,7 @@ void ekf::predict() noexcept
   namespace bnu = boost::numeric::ublas;
 
   const identity_matrix F{m_n};
-  matrix FP{m_n, m_n};
-  bnu::axpy_prod(F, m_P, FP, true);
+  matrix FP{bnu::prod(F, m_P)};
 
   const identity_matrix & Ft = F; // matrix Ft{bnu::trans(F)} simplified since identity_matrix == trans(identity_matrix);
 
@@ -96,8 +95,7 @@ bool ekf::update(const vector & p_z, // observations m wide
   namespace bnu = boost::numeric::ublas;
 
   // G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}
-  matrix HP{m_m, m_n};
-  bnu::axpy_prod(p_h, m_P, HP, true);
+  matrix HP{bnu::prod(p_h, m_P)};
 
   matrix Ht{bnu::trans(p_h)};
   matrix HpHtR{diagonal_matrix_eps{m_m}}; // Add R measurement noise.
@@ -109,11 +107,9 @@ bool ekf::update(const vector & p_z, // observations m wide
     return false;
   }
 
-  matrix PHt{m_n, m_m};
-  bnu::axpy_prod(m_P, Ht, PHt, true);
+  matrix PHt{bnu::prod(m_P, Ht)};
 
-  matrix G{m_n, m_m};
-  bnu::axpy_prod(PHt, HPHtRinv, G, true);
+  matrix G{bnu::prod(PHt, HPHtRinv)};
 
   // \hat{x}_k = \hat{x_k} + G_k(z_k - h(\hat{x}_k))
   vector z_hx{p_z};
@@ -126,8 +122,7 @@ bool ekf::update(const vector & p_z, // observations m wide
   bnu::axpy_prod(G, p_h, GH, false);
   GH *= -1.0; // negate
 
-  matrix GHP{m_n, m_n};
-  bnu::axpy_prod(GH, m_P, GHP, true);
+  matrix GHP{bnu::prod(GH, m_P)};
   m_P.swap(GHP);
 
   return true;
