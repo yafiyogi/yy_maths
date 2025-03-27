@@ -41,21 +41,44 @@ ekf::ekf(size_type p_m,
   m_n(p_n),
   m_m(p_m),
   m_x(zero_vector{m_n}),
-  m_P(identity_matrix{m_n})
+  m_P(identity_matrix{m_n}),
+  m_R{vector{m_m, EPS}}
 {
+}
+
+ekf::ekf(size_type p_m,
+         size_type p_n,
+         vector & p_r) noexcept:
+  m_n(p_n),
+  m_m(p_m),
+  m_x(zero_vector{m_n}),
+  m_P(identity_matrix{m_n}),
+  m_R{}
+{
+  vector diagonal{p_m, EPS};
+
+  size_type size = std::min(p_m, p_r.size());
+
+  for(size_type i = 0; i < size; ++i)
+  {
+    diagonal(i) = p_r(i);
+  }
+  m_R = diagonal_matrix{diagonal};
 }
 
 ekf::ekf(ekf && other) noexcept:
   m_n(other.m_n),
   m_m(other.m_m),
   m_x(),
-  m_P()
+  m_P(),
+  m_R()
 {
   other.m_n = 0;
   other.m_m = 0;
 
   m_x.swap(other.m_x);
   m_P.swap(other.m_P);
+  m_R.swap(other.m_R);
 }
 
 ekf & ekf::operator=(ekf && other) noexcept
@@ -71,6 +94,8 @@ ekf & ekf::operator=(ekf && other) noexcept
     m_x.swap(other.m_x);
     m_P = matrix{};
     m_P.swap(other.m_P);
+    m_R = diagonal_matrix_type{};
+    m_R.swap(other.m_R);
   }
   return *this;
 }
@@ -96,9 +121,9 @@ bool ekf::update(const vector & p_z, // observations m wide
 
   // G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}
   matrix HP{bnu::prod(p_h, m_P)};
-
   matrix Ht{bnu::trans(p_h)};
-  matrix HpHtR{diagonal_matrix_eps{m_m}}; // Add R measurement noise.
+  matrix HpHtR{m_R}; // Add R measurement noise.
+
   bnu::axpy_prod(HP, Ht, HpHtR, false);
 
   matrix HPHtRinv{m_m, m_m};
@@ -108,7 +133,6 @@ bool ekf::update(const vector & p_z, // observations m wide
   }
 
   matrix PHt{bnu::prod(m_P, Ht)};
-
   matrix G{bnu::prod(PHt, HPHtRinv)};
 
   // \hat{x}_k = \hat{x_k} + G_k(z_k - h(\hat{x}_k))

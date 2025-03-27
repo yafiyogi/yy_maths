@@ -42,8 +42,9 @@ class ekf final
 
     using matrix = yy_maths::matrix<value_type>;
     using identity_matrix = yy_maths::identity_matrix<value_type>;
-    using diagonal_matrix_eps = diagonal_matrix<value_type, EPS>;
-    using diagonal_matrix_neg = diagonal_matrix<value_type, -1.0>;
+    using diagonal_matrix_eps = diagonal_matrix_fixed<value_type, EPS>;
+    using diagonal_matrix_neg = diagonal_matrix_fixed<value_type, -1.0>;
+    using diagonal_matrix_type = diagonal_matrix<value_type>;
     using zero_matrix = yy_maths::zero_matrix<value_type>;
     using vector = yy_maths::vector<value_type>;
     using zero_vector = yy_maths::zero_vector<value_type>;
@@ -51,6 +52,9 @@ class ekf final
 
     ekf(size_type p_m,
         size_type p_n) noexcept;
+    ekf(size_type p_m,
+        size_type p_n,
+        vector & p_r) noexcept;
 
     constexpr ekf() noexcept = default;
     ekf(const ekf & other) noexcept = default;
@@ -85,10 +89,11 @@ class ekf final
     }
 
   private:
-    size_type m_n = 0;
-    size_type m_m = 0;
+    size_type m_n = 0; // Number of outputs
+    size_type m_m = 0; // Number of inputs
     vector m_x{}; // State vector.
     matrix m_P{}; // Prediction error covariance
+    diagonal_matrix_type m_R{}; // Measurement noise.
 };
 
 } // namespace yafiyogi::yy_maths
