@@ -40,7 +40,15 @@ include(${YY_CMAKE}/cmake_common.txt)
 include(${YY_CMAKE}/cmake_boost-1.84.0.txt)
 include(${YY_CMAKE}/cmake_clang_tidy.txt)
 
+#find_package(fmt REQUIRED)
+#find_package(spdlog REQUIRED)
+
 add_library(yy_maths STATIC)
+
+target_compile_options(yy_maths
+  PRIVATE
+  "-DSPDLOG_COMPILED_LIB"
+  "-DSPDLOG_FMT_EXTERNAL")
 
 target_include_directories(yy_maths
   PRIVATE
