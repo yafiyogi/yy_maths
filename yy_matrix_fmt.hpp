@@ -51,21 +51,6 @@ struct fmt::formatter<boost::numeric::ublas::matrix<double>>
       return matrix_formatter.parse(ctx);
     }
 
-    // template<typename FormatContext>
-    // auto format(const ublas_vector & p_vector,
-    //             FormatContext & ctx) const
-    // {
-    //   auto out{fmt::format_to(ctx.out(), std::string_view{"({})("}, p_vector.size())};
-
-    //   vector_view view{join(p_vector.begin(), p_vector.end(), std::string_view{","})};
-
-    //   out = vector_formatter.format(view, ctx);
-
-    //   return fmt::format_to(out, std::string_view{")"});
-
-    //   return ctx.out();
-    // }
-
     auto format(const ublas_matrix & p_matrix,
                 format_context & ctx) const
     {
@@ -113,13 +98,13 @@ struct fmt::formatter<boost::numeric::ublas::vector<double>>
     auto format(const ublas_vector & p_vector,
                 FormatContext & ctx) const
     {
-      auto out{fmt::format_to(ctx.out(), std::string_view{"({})("}, p_vector.size())};
+      fmt::format_to(ctx.out(), std::string_view{"({})("}, p_vector.size());
 
       vector_view view{p_vector.begin(), p_vector.end(), std::string_view{","}};
 
-      out = vector_formatter.format(view, ctx);
+      vector_formatter.format(view, ctx);
 
-      return fmt::format_to(out, std::string_view{")"});
+      fmt::format_to(ctx.out(), std::string_view{")"});
 
       return ctx.out();
     }
