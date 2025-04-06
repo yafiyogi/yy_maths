@@ -156,14 +156,14 @@ class diagonal_matrix_fixed:
 
     // Swapping
     BOOST_UBLAS_INLINE
-    void swap (diagonal_matrix_fixed &m) {
+    constexpr void swap (diagonal_matrix_fixed &m) noexcept {
       if (this != &m) {
         std::swap (m_size, m.m_size);
         std::swap (size_common_, m.size_common_);
       }
     }
     BOOST_UBLAS_INLINE
-    friend void swap (diagonal_matrix_fixed &m1, diagonal_matrix_fixed &m2) {
+    friend constexpr void swap (diagonal_matrix_fixed &m1, diagonal_matrix_fixed &m2) noexcept {
       m1.swap (m2);
       m1.swap (m2);
     }
@@ -664,14 +664,14 @@ class diagonal_matrix:
 
     // Swapping
     BOOST_UBLAS_INLINE
-    void swap (diagonal_matrix &m) {
+    constexpr void swap (diagonal_matrix &m) noexcept {
       if (this != &m) {
         std::swap (m_size, m.m_size);
         std::swap (m_values, m.m_values);
       }
     }
     BOOST_UBLAS_INLINE
-    friend void swap (diagonal_matrix &m1, diagonal_matrix &m2) {
+    constexpr friend void swap (diagonal_matrix &m1, diagonal_matrix &m2) noexcept {
       m1.swap (m2);
     }
 
