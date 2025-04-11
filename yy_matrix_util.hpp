@@ -30,6 +30,43 @@
 
 namespace yafiyogi::yy_maths {
 
+template<typename T>
+matrix<T> & mask_lower_triangle(matrix<T> & m)
+{
+  using matrix_type = matrix<T>;
+  using value_type = typename matrix_type::value_type;
+  using size_type = typename matrix_type::size_type;
+
+  const size_type size = m.size1();
+  for(size_type i = 0; i < size; ++i)
+  {
+    for(size_type j = i + 1; j < size; ++j)
+    {
+      m(i, j) = value_type{};
+    }
+  }
+
+  return m;
+}
+
+template<typename T>
+matrix<T> & mirror_lower_triangle(matrix<T> & m)
+{
+  using matrix_type = matrix<T>;
+  using size_type = typename matrix_type::size_type;
+
+  const size_type size = m.size1();
+  for(size_type i = 0; i < size; ++i)
+  {
+    for(size_type j = 0; j < i; ++j)
+    {
+      m(i, j) = m(j, i);
+    }
+  }
+
+  return m;
+}
+
 namespace matrix_util_detail {
 // From https://web.archive.org/web/20231002021242/http://jean-pierre.moreau.pagesperso-orange.fr:80/Cplus/choles_cpp.txt
 // and https://github.com/simondlevy/TinyEKF/blob/master/src/tinyekf.h
@@ -121,15 +158,9 @@ constexpr bool cholsl(const matrix<T> & A,
     return false;
   }
 
-  const size_type size = A.size1();
-  for(size_type i = 0; i < size; ++i)
-  {
-    for(size_type j = i + 1; j < size; ++j)
-    {
-      a(i, j) = value_type{};
-    }
-  }
+  mask_lower_triangle(a);
 
+  const size_type size = a.size1();
   for(size_type i = 0; i < size; ++i)
   {
     auto & a_ii = a(i, i);
@@ -153,13 +184,7 @@ constexpr bool cholsl(const matrix<T> & A,
     }
   }
 
-  for(size_type i = 0; i < size; ++i)
-  {
-    for(size_type j = 0; j < i; ++j)
-    {
-      a(i, j) = a(j, i);
-    }
-  }
+  mirror_lower_triangle(a);
 
   return true; // success
 }
