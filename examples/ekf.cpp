@@ -27,16 +27,20 @@
 #include "boost/numeric/ublas/assignment.hpp"
 #include "fmt/format.h"
 
+#include "yy_matrix_fmt.hpp"
+#include "yy_matrix_util.hpp"
 #include "yy_ekf.hpp"
-
-constexpr size_t ekf_n = 2;
-constexpr size_t ekf_m = 3;
 
 using namespace yafiyogi;
 
 using ekf = yy_maths::ekf;
+using value_type = ekf::value_type;
+using size_type = ekf::size_type;
 using matrix = ekf::matrix;
 using vector = ekf::vector;
+
+constexpr size_type ekf_n = 2;
+constexpr size_type ekf_m = 3;
 
 void predict_update(ekf & filter,
                     const matrix & h,
@@ -110,7 +114,6 @@ int main()
     predict_update(ekf_state, H2, z);
     fmt::print("2b) h=[{}] t=[{}]\n", ekf_state.X(0), ekf_state.X(1));
   }
-
 
   return 0;
 }
