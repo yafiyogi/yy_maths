@@ -61,7 +61,7 @@ target_include_directories(yy_maths
 target_sources(yy_maths
   PRIVATE
     yy_ekf.cpp
-  PRIVATE FILE_SET HEADERS
+  PUBLIC FILE_SET HEADERS
     FILES
       yy_ekf.hpp
       yy_fib.hpp
@@ -71,14 +71,11 @@ target_sources(yy_maths
       yy_matrix_fwd.hpp
       yy_matrix_util.hpp)
 
-#install(FILES $<TARGET_FILE_NAME:yy_maths> DESTINATION lib)
+install(TARGETS yy_maths
+  EXPORT yy_mathsTargets
+  FILE_SET HEADERS DESTINATION include/yy_maths)
 
-get_target_property(yy_headers yy_maths HEADER_SET)
-install(FILES ${yy_headers} DESTINATION include/yy_maths)
-
-install(TARGETS yy_maths EXPORT yy_mathsTargets)
 install(EXPORT yy_mathsTargets
-  #FILE yy_mathsTargets.cmake
   NAMESPACE yy_maths::
   DESTINATION lib/cmake/yy_maths)
 
