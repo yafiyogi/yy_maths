@@ -149,7 +149,7 @@ bool ekf::update(const vector & p_z, // observations m wide
 
   // \hat{x}_k = \hat{x_k} + G_k(z_k - h(\hat{x}_k))
   vector z_hx{p_z};
-  z_hx -= p_hx;
+  bnu::noalias(z_hx) -= p_hx;
 
   bnu::axpy_prod(G, z_hx, m_x, false);
 
