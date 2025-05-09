@@ -34,6 +34,7 @@
 # define NDEBUG
 #endif
 #define BOOST_UBLAS_MOVE_SEMANTICS
+#define BOOST_UBLAS_NDEBUG
 
 #include "boost/numeric/ublas/operation.hpp"
 
