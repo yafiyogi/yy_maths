@@ -86,4 +86,4 @@ install(FILES "yy_mathsConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/yy_mathsConfig
 add_subdirectory(examples)
 #add_subdirectory(benchmarks)
 
-add_yy_tidy_all(yy_maths)
+add_yy_tidy_targets(yy_maths)
