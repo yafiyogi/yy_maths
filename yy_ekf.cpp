@@ -27,15 +27,6 @@
 // Inspired by https://github.com/simondlevy/TinyEKF
 // also https://simondlevy.github.io/ekf-tutorial/
 
-// For Boost uBLAS NDEBUG & BOOST_UBLAS_MOVE_SEMANTICS usage see:
-// https://www.boost.org/doc/libs/1_84_0/libs/numeric/ublas/doc/options.html
-
-#if !defined(NDEBUG)
-# define NDEBUG
-#endif
-#define BOOST_UBLAS_MOVE_SEMANTICS
-#define BOOST_UBLAS_NDEBUG
-
 #include "boost/numeric/ublas/operation.hpp"
 
 #include "yy_matrix_util.hpp"
@@ -50,28 +41,32 @@ ekf::ekf(size_type p_m,
   m_m(p_m),
   m_x(zero_vector{m_n}),
   m_P(identity_matrix{m_n}),
-  m_R{vector{m_m, EPS}}
+  m_R(vector{m_m, EPS}),
+  m_F(m_n)
 {
 }
 
 ekf::ekf(size_type p_m,
          size_type p_n,
-         vector & p_r) noexcept:
+         const vector & p_r) noexcept:
   m_n(p_n),
   m_m(p_m),
   m_x(zero_vector{m_n}),
   m_P(identity_matrix{m_n}),
-  m_R{}
+  m_R{m_m},
+  m_F(m_n)
 {
-  vector diagonal{p_m, EPS};
+  vector diagonal_vec{m_m, EPS};
 
-  size_type size = std::min(p_m, p_r.size());
+  const size_type size = std::min(m_m, p_r.size());
 
   for(size_type i = 0; i < size; ++i)
   {
-    diagonal(i) = p_r(i);
+    diagonal_vec(i) = p_r(i);
   }
-  m_R = diagonal_matrix{diagonal};
+
+  diagonal_matrix tmp{diagonal_vec};
+  m_R.swap(tmp);
 }
 
 ekf::ekf(ekf && other) noexcept:
@@ -79,7 +74,8 @@ ekf::ekf(ekf && other) noexcept:
   m_m(other.m_m),
   m_x(),
   m_P(),
-  m_R()
+  m_R(),
+  m_F()
 {
   other.m_n = 0;
   other.m_m = 0;
@@ -87,6 +83,7 @@ ekf::ekf(ekf && other) noexcept:
   m_x.swap(other.m_x);
   m_P.swap(other.m_P);
   m_R.swap(other.m_R);
+  m_F.swap(other.m_F);
 }
 
 ekf & ekf::operator=(ekf && other) noexcept
@@ -104,6 +101,8 @@ ekf & ekf::operator=(ekf && other) noexcept
     m_P.swap(other.m_P);
     m_R = diagonal_matrix_type{};
     m_R.swap(other.m_R);
+    m_F = identity_matrix{};
+    m_F.swap(other.m_F);
   }
   return *this;
 }
@@ -112,12 +111,11 @@ void ekf::predict() noexcept
 {
   namespace bnu = boost::numeric::ublas;
 
-  const identity_matrix F{m_n};
-  matrix FP{m_n, m_n};
+  matrix FP{m_n, m_n, value_type{}};
 
-  bnu::axpy_prod(F, m_P, FP, true);
+  bnu::axpy_prod(m_F, m_P, FP, false);
 
-  const identity_matrix & Ft = F; // matrix Ft{bnu::trans(F)} simplified since identity_matrix == trans(identity_matrix);
+  const identity_matrix & Ft = m_F; // matrix Ft{bnu::trans(F)} simplified since identity_matrix == trans(identity_matrix);
 
   m_P = diagonal_matrix_eps{m_n}; // Add process noise Q.
   bnu::axpy_prod(FP, Ft, m_P, false);
@@ -130,8 +128,9 @@ bool ekf::update(const vector & p_z, // observations m wide
   namespace bnu = boost::numeric::ublas;
 
   // G_k = P_k H^T_k (H_k P_k H^T_k + R)^{-1}
-  matrix HP{m_m, m_n};
-  bnu::axpy_prod(p_h, m_P, HP, true);
+  matrix HP{m_m, m_n, value_type{}};
+  bnu::axpy_prod(p_h, m_P, HP, false);
+
   auto Ht{bnu::trans(p_h)};
   matrix HpHtR{m_R}; // Add R measurement noise.
 
@@ -143,10 +142,11 @@ bool ekf::update(const vector & p_z, // observations m wide
     return false;
   }
 
-  matrix PHt{m_n, m_m};
-  bnu::axpy_prod(m_P, Ht, PHt, true);
-  matrix G{m_n, m_m};
-  bnu::axpy_prod(PHt, HPHtRinv, G, true);
+  matrix PHt{m_n, m_m, value_type{}};
+  bnu::axpy_prod(m_P, Ht, PHt, false);
+
+  matrix G{m_n, m_m, value_type{}};
+  bnu::axpy_prod(PHt, HPHtRinv, G, false);
 
   // \hat{x}_k = \hat{x_k} + G_k(z_k - h(\hat{x}_k))
   vector z_hx{p_z};
@@ -159,8 +159,8 @@ bool ekf::update(const vector & p_z, // observations m wide
   bnu::axpy_prod(G, p_h, GH, false);
   GH *= -1.0; // negate
 
-  matrix GHP{m_n, m_n};
-  bnu::axpy_prod(GH, m_P, GHP, true);
+  matrix GHP{m_n, m_n, value_type{}};
+  bnu::axpy_prod(GH, m_P, GHP, false);
   m_P.swap(GHP);
 
   return true;

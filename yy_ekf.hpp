@@ -29,8 +29,17 @@
 
 #pragma once
 
-#include "yy_matrix.hpp"
+// For Boost uBLAS NDEBUG & BOOST_UBLAS_MOVE_SEMANTICS usage see:
+// https://www.boost.org/doc/libs/1_84_0/libs/numeric/ublas/doc/options.html
+
+#if !defined(NDEBUG)
+# define NDEBUG
+#endif
+#define BOOST_UBLAS_MOVE_SEMANTICS
+#define BOOST_UBLAS_NDEBUG
+
 #include "yy_diagonal_matrix.hpp"
+#include "yy_matrix.hpp"
 
 namespace yafiyogi::yy_maths {
 
@@ -50,11 +59,8 @@ class ekf final
     using zero_vector = yy_maths::zero_vector<value_type>;
     using size_type = matrix::size_type;
 
-    ekf(size_type p_m,
-        size_type p_n) noexcept;
-    ekf(size_type p_m,
-        size_type p_n,
-        vector & p_r) noexcept;
+    ekf(size_type p_m, size_type p_n) noexcept;
+    ekf(size_type p_m, size_type p_n, const vector & p_r) noexcept;
 
     constexpr ekf() noexcept = default;
     ekf(const ekf & other) noexcept = default;
@@ -89,11 +95,12 @@ class ekf final
     }
 
   private:
-    size_type m_n = 0; // Number of outputs
-    size_type m_m = 0; // Number of inputs
-    vector m_x{}; // State vector.
-    matrix m_P{}; // Prediction error covariance
+    size_type m_n = 0;          // Number of outputs
+    size_type m_m = 0;          // Number of inputs
+    vector m_x{};               // State vector.
+    matrix m_P{};               // Prediction error covariance
     diagonal_matrix_type m_R{}; // Measurement noise.
+    identity_matrix m_F{};      // Process model Jacobian is identity matrix
 };
 
 } // namespace yafiyogi::yy_maths
