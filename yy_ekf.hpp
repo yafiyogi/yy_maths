@@ -32,11 +32,11 @@
 // For Boost uBLAS NDEBUG & BOOST_UBLAS_MOVE_SEMANTICS usage see:
 // https://www.boost.org/doc/libs/1_84_0/libs/numeric/ublas/doc/options.html
 
-#if !defined(NDEBUG)
-# define NDEBUG
-#endif
 #define BOOST_UBLAS_MOVE_SEMANTICS
-#define BOOST_UBLAS_NDEBUG
+
+#ifdef NDEBUG
+# define BOOST_UBLAS_NDEBUG
+#endif
 
 #include "yy_diagonal_matrix.hpp"
 #include "yy_matrix.hpp"

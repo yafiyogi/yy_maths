@@ -117,7 +117,7 @@ void ekf::predict() noexcept
 
   const identity_matrix & Ft = m_F; // matrix Ft{bnu::trans(F)} simplified since identity_matrix == trans(identity_matrix);
 
-  m_P = diagonal_matrix_eps{m_n}; // Add process noise Q.
+  bnu::noalias(m_P) = diagonal_matrix_eps{m_n}; // Add process noise Q.
   bnu::axpy_prod(FP, Ft, m_P, false);
 }
 
